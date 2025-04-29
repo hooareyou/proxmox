@@ -55,7 +55,40 @@
 - 역할 기반 접근 제어(RBAC)
 - 방화벽 및 네트워크 가상화(VLAN, Linux Bridge)
 
-## 5. Proxmox Backup Server 개념
+## 5. Proxmox 설치 후 기본 스토리지 구성
+### Proxmox VE 설치 직후 기본으로 다음과 같이 스토리지가 구성됨
+#### 1) local
+- /var/lib/vz 경로에 ISO 이미지, 백업, CT 템플릿 저장
+- VM 디스크도 저장 가능
+
+#### 2) local-lvm
+- LVM-Thin 기반 스토리지
+- 주로 VM의 디스크 이미지 저장용
+- 고속 스냅샷 및 효율적인 공간 활용 가능
+
+## 6. VM과 CT 개념 및 차이점
+### 1) VM (Virtual Machine)
+- KVM 기반
+- 독립적인 가상 하드웨어 제공
+- 리눅스, 윈도우 등 다양한 OS 설치 가능
+- 자원 소모가 많지만 호환성과 확장성 뛰어남
+
+### 2) CT (Container)
+- LXC 기반
+- 호스트 커널을 공유
+- 리눅스 운영체제만 지원
+- 자원 소모가 매우 적고 부팅이 빠름
+
+### 주요 차이점
+| 항목 | VM | CT |
+|:------:|:------------:|:------------:|
+|기술|KVM|LXC|
+|커널|독립적|호스트 공유|
+|지원 OS|리눅스, 윈도우|리눅스 전용|
+|자원 사용|높음|낮음|
+|성능|다소 무거움|가볍고 빠름|
+
+## 7. Proxmox Backup Server 개념
 ### Proxmox Backup Server(PBS)는 Proxmox VE 환경에서 VM, CT, 파일의 백업 및 복구를 고속으로 처리할 수 있도록 최적화된 오픈소스 백업 솔루션
 ### 1) 주요 특징:
 - 증분 백업 지원 → 빠르고 저장 공간 절약
@@ -64,14 +97,48 @@
 - 클라이언트 인증 및 암호화 지원
 - CLI, 웹 인터페이스 지원
 
-## 6. Proxmox Backup Server Datastore 관리
+## 8. Proxmox Backup Server Datastore 관리
+### 1) Datastore란?
+- PBS 내에 생성된 논리적 저장소 단위
+- 백업 데이터 저장 경로를 지정하며, 여러 개 운영 가능
 
-## 7. Proxmox VM Backup 및 Restore 방법 (CLI 기준)
+### 2) 생성 방법
+- PBS 웹 UI → Datastore → Add Datastore
+- 이름 입력, 경로 지정 (/mnt/datastore1 등)
+- 파일시스템 선택 (ext4, ZFS, XFS 등)
 
-## 8. 백업 스케줄 설정 방법
+### 3) Datastore를 Proxmox VE에 연결하기
+- Proxmox VE 웹 UI → Datacenter → Storage → Add → Proxmox Backup Server
+- PBS 서버 IP, 사용자(root@pam), 비밀번호, 인증서 Fingerprint, Datastore 이름 입력
+- 사용할 콘텐츠(backup) 선택 후 저장
 
-## 9. Proxmox 클러스터 구성
+## 9. Proxmox VM Backup 및 Restore 방법 (CLI 기준)
+### 1) 백업 명령어
+```
+vzdump 101 --storage pbs-store --mode snapshot --compress zstd
+```
+- 101: VM ID
+- pbs-store: PBS에 연결된 저장소 ID
+- snapshot 모드로 백업
+- zstd로 압축
 
-## 10. Proxmox 설치 후 기본 스토리지 구성
+### 2) 복원 명령어
+```
+qmrestore pbs:vm/101/2025-04-29T10:00:00Z 102
+```
+- 기존 백업 파일을 새 VM ID 102로 복원
 
-## 11. VM과 CT 개념 및 차이점
+## 10. 백업 스케줄 설정 방법
+## 1) GUI를 통한 설정
+- Datacenter → Backup
+- "Add" 클릭
+- 노드, VM 선택
+- 스토리지 선택 (PBS 또는 local 등)
+- 스케줄 주기(cron 형식) 및 시간 설정
+- 모드(snapshot 등) 선택 후 저장
+
+## 2) CLI를 통한 설정
+```
+echo '0 2 * * * root vzdump 101 --storage pbs-store --mode snapshot --compress zstd' >> /etc/crontab
+```
+- 매일 새벽 2시에 101번 VM 백업
