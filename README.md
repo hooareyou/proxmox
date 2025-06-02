@@ -1,4 +1,4 @@
-# Proxmox VE 종합 가이드
+# Proxmox VE
 
 ---
 
