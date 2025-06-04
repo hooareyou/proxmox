@@ -26,9 +26,6 @@
 ---
 
 ## 2. Terraform 주요 개념
-
-Terraform을 구성하는 핵심 개념은 다음과 같다
-
 | 개념 | 설명 | 예시 |
 |------|------|------|
 | **Provider** | Terraform과 외부 인프라 시스템(Proxmox, AWS 등)을 연결하는 플러그인. | `telmate/proxmox` |
@@ -44,10 +41,10 @@ Terraform을 구성하는 핵심 개념은 다음과 같다
 
 ---
 
-## 3. Proxmox + Terraform 구성도
+## 3. Proxmox + Terraform 구성도(예시)
 
 ```
-Terraform 구성
+Terraform 구성(vm 설치를 위한 구성)
 │
 ├── main.tf               # Provider 설정
 ├── variables.tf          # 전역 변수 정의
