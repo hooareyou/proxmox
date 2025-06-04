@@ -157,7 +157,7 @@ runcmd:
 |--------|------|
 | terraform init | 초기화 및 provider 설치 |
 | terraform plan | 변경 예정 사항 미리 보기 |
-| terraform apply | VM 생성 적용 |
+| terraform apply | 변경 사항 생성 적용 |
 | terraform destroy | 생성된 자원 삭제 |
 | terraform fmt | 코드 정리 |
 | terraform output | 결과값 출력(-o json 옵션으로 json 형식으로 저장 가능 |
