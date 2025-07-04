@@ -70,14 +70,3 @@ apt upgrade -y
 ```
 wget https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
 ```
-
----
-
-## ✅ 설정 요약표
-
-| 항목 | 설정 내용 |
-|------|-----------|
-| 기업용 리포지터리 | `/etc/apt/sources.list.d/pbs-enterprise.list`에서 주석 처리 |
-| 무료 저장소 추가 | `/etc/apt/sources.list`에 `pbs-no-subscription` 저장소 추가 |
-| GPG 키 오류 해결 | `proxmox-release-bookworm.gpg` 키 수동 등록 |
-| 사용 명령어 | `apt update`, `apt upgrade -y`, `apt full-upgrade` |
